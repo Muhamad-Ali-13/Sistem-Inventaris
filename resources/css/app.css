@@ -1,0 +1,118 @@
+/* resources/css/app.css */
+.sidebar-dark-primary {
+    background-color: #34403a;
+}
+
+.brand-link {
+    border-bottom: 1px solid #4b545c;
+}
+
+[class*='sidebar-dark'] .brand-link {
+    border-bottom: 1px solid #4b545c;
+}
+
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.small-box p {
+    font-size: 1rem;
+}
+
+.small-box .icon {
+    color: rgba(0,0,0,.15);
+    z-index: 0;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 70px;
+    transition: all .3s linear;
+}
+
+.small-box:hover .icon {
+    font-size: 75px;
+}
+
+/* Custom styles for inventory system */
+.content-wrapper {
+    background-color: #f4f6f9;
+}
+
+.card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border: 0;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.table-responsive {
+    border-radius: 0.25rem;
+}
+
+.btn {
+    border-radius: 0.25rem;
+}
+
+.form-control {
+    border-radius: 0.25rem;
+}
+
+/* Status badges */
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-approved {
+    background-color: #28a745;
+}
+
+.badge-rejected {
+    background-color: #dc3545;
+}
+
+.badge-returned {
+    background-color: #17a2b8;
+}
+
+/* Login page styles */
+.login-page {
+    background-color: #f4f6f9;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.login-box {
+    width: 360px;
+    margin: 0 auto;
+}
+
+.login-card {
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.login-card-body {
+    padding: 2rem;
+}
