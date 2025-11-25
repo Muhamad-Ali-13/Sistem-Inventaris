@@ -43,12 +43,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('roles', RoleController::class)->except(['show']);
     Route::resource('vehicles', VehicleController::class);
-    Route::resource('item-requests', RequestController::class);
+    Route::resource('item-requests', ItemRequestController::class);
     Route::resource('vehicle-usage', VehicleUsageController::class);
     
     // Approval routes
-    Route::put('item-requests/{item_request}/approve', [RequestController::class, 'approve'])->name('item-requests.approve');
-    Route::put('item-requests/{item_request}/reject', [RequestController::class, 'reject'])->name('item-requests.reject');
+    
+    Route::put('item-requests/{item_request}/approve', [ItemRequestController::class, 'approve'])->name('item-requests.approve');
+    Route::put('item-requests/{item_request}/reject', [ItemRequestController::class, 'reject'])->name('item-requests.reject');
     
     Route::put('vehicle-usage/{vehicle_usage}/approve', [VehicleUsageController::class, 'approve'])->name('vehicle-usage.approve');
     Route::put('vehicle-usage/{vehicle_usage}/reject', [VehicleUsageController::class, 'reject'])->name('vehicle-usage.reject');

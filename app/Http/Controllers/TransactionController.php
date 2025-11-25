@@ -15,16 +15,58 @@ class TransactionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        // Manual permission check - alternatif tanpa middleware
+        $this->middleware(function ($request, $next) {
+            if (!Auth::check()) {
+                return redirect()->route('login');
+            }
+
+            $user = Auth::user();
+
+            // Safe role check
+            if ($this->userHasRole($user, 'super admin')) {
+                return $next($request);
+            }
+
+            if ($this->userHasRole($user, 'admin')) {
+                return $next($request);
+            }
+
+            // Karyawan tidak bisa akses
+            abort(403, 'Unauthorized action.');
+        });
+    }
+
+    /**
+     * Safe method to check user role
+     */
+    private function userHasRole($user, $role)
+    {
+        // Method 1: Using hasRole if method exists
+        if (method_exists($user, 'hasRole')) {
+            return $user->hasRole($role);
+        }
+
+        // Method 2: Manual check through roles
+        foreach ($user->roles as $userRole) {
+            if ($userRole->name === $role) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function index(Request $request)
     {
         $query = Transaction::with(['item', 'user']);
 
-        if (!$this->userHasRole(['super admin', 'admin'])) {
+        if (!$this->userHasRole(Auth::user(), 'super admin') && !$this->userHasRole(Auth::user(), 'admin')) {
             $query->where('user_id', Auth::id());
         }
 
+        // Manual search implementation
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -96,12 +138,13 @@ class TransactionController extends Controller
         }
         $item->save();
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction created successfully.');
+        return redirect()->route('transactions.index')
+            ->with('success', 'Transaction created successfully.');
     }
 
     public function show(Transaction $transaction)
     {
-        if (!$this->userHasRole(['super admin', 'admin']) && $transaction->user_id != Auth::id()) {
+        if (!$this->userHasRole(Auth::user(), 'super admin') && !$this->userHasRole(Auth::user(), 'admin') && $transaction->user_id != Auth::id()) {
             abort(403);
         }
 

@@ -77,7 +77,7 @@ class ReportController extends Controller
             'total_transactions' => $transactions->count(),
         ];
 
-        $itemRequests = Request::with(['item', 'user', 'approver'])
+        $itemRequests = ItemRequest::with(['item', 'user', 'approver'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
 

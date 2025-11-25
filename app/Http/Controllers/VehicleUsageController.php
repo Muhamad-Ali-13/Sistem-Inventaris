@@ -40,6 +40,7 @@ class VehicleUsageController extends Controller
             $query->where('user_id', Auth::id());
         }
 
+        // Manual search implementation
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function ($q) use ($search) {

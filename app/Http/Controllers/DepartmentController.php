@@ -11,57 +11,31 @@ class DepartmentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-
-        // Manual permission check - alternatif tanpa middleware
+        
         $this->middleware(function ($request, $next) {
             if (!Auth::check()) {
                 return redirect()->route('login');
             }
 
             $user = Auth::user();
-
-            // Safe role check
-            if ($this->userHasRole($user, 'super admin')) {
+            
+            if ($this->userHasRole($user, 'super admin') || $this->userHasRole($user, 'admin')) {
                 return $next($request);
             }
-
-            if ($this->userHasRole($user, 'admin')) {
-                return $next($request);
-            }
-
-            // Karyawan tidak bisa akses
+            
             abort(403, 'Unauthorized action.');
         });
-    }
-
-    /**
-     * Safe method to check user role
-     */
-    private function userHasRole($user, $role)
-    {
-        // Method 1: Using hasRole if method exists
-        if (method_exists($user, 'hasRole')) {
-            return $user->hasRole($role);
-        }
-
-        // Method 2: Manual check through roles
-        foreach ($user->roles as $userRole) {
-            if ($userRole->name === $role) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function index(Request $request)
     {
         $query = Department::query();
 
+        // Manual search implementation
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where('name', 'like', "%$search%")
-                ->orWhere('description', 'like', "%$search%");
+                  ->orWhere('description', 'like', "%$search%");
         }
 
         $departments = $query->paginate(10);
@@ -82,7 +56,8 @@ class DepartmentController extends Controller
 
         Department::create($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Department created successfully.');
+        return redirect()->route('departments.index')
+            ->with('success', 'Department created successfully.');
     }
 
     public function edit(Department $department)
@@ -99,13 +74,30 @@ class DepartmentController extends Controller
 
         $department->update($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
+        return redirect()->route('departments.index')
+            ->with('success', 'Department updated successfully.');
     }
 
     public function destroy(Department $department)
     {
         $department->delete();
 
-        return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
+        return redirect()->route('departments.index')
+            ->with('success', 'Department deleted successfully.');
+    }
+
+    private function userHasRole($user, $role)
+    {
+        if (method_exists($user, 'hasRole')) {
+            return $user->hasRole($role);
+        }
+
+        foreach ($user->roles as $userRole) {
+            if ($userRole->name === $role) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
