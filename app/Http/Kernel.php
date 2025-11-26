@@ -24,8 +24,20 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        
+
         // Custom middleware - PASTIKAN INI ADA
         'permission' => \App\Http\Middleware\PermissionMiddleware::class,
+    ];
+
+    protected $middlewareGroups = [
+        'web' => [
+            // ... middleware lainnya
+            \App\Http\Middleware\SetTimezone::class,
+        ],
+
+        'api' => [
+            // ... middleware lainnya  
+            \App\Http\Middleware\SetTimezone::class,
+        ],
     ];
 }

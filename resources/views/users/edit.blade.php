@@ -6,21 +6,22 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Create Employee</h3>
+                    <h3 class="card-title">Edit User</h3>
                     <div class="card-tools">
-                        <a href="{{ route('employees.index') }}" class="btn btn-secondary">Back to List</a>
+                        <a href="{{ route('users.index') }}" class="btn btn-secondary">Back to List</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('employees.store') }}">
+                    <form method="POST" action="{{ route('users.update', $user) }}">
                         @csrf
+                        @method('PUT')
                         
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Full Name *</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                           id="name" name="name" value="{{ old('name') }}" required>
+                                           id="name" name="name" value="{{ old('name', $user->name) }}" required>
                                     @error('name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -32,7 +33,7 @@
                                 <div class="form-group">
                                     <label for="email">Email Address *</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                           id="email" name="email" value="{{ old('email') }}" required>
+                                           id="email" name="email" value="{{ old('email', $user->email) }}" required>
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -45,10 +46,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="phone">Phone Number *</label>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                           id="phone" name="phone" value="{{ old('phone') }}" required>
-                                    @error('phone')
+                                    <label for="password">New Password</label>
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                           id="password" name="password">
+                                    <small class="form-text text-muted">Leave blank if you don't want to change password</small>
+                                    @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -57,32 +59,24 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="department_id">Department *</label>
-                                    <select class="form-control @error('department_id') is-invalid @enderror" 
-                                            id="department_id" name="department_id" required>
-                                        <option value="">Select Department</option>
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
-                                                {{ $department->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('department_id')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                    <label for="password_confirmation">Confirm New Password</label>
+                                    <input type="password" class="form-control" 
+                                           id="password_confirmation" name="password_confirmation">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- TAMBAHKAN INPUT POSITION -->
                         <div class="form-group">
-                            <label for="position">Position *</label>
-                            <input type="text" class="form-control @error('position') is-invalid @enderror" 
-                                   id="position" name="position" value="{{ old('position') }}" required
-                                   placeholder="Enter employee position (e.g., Manager, Staff, etc.)">
-                            @error('position')
+                            <label for="roles">Roles *</label>
+                            <select class="form-control select2 @error('roles') is-invalid @enderror" 
+                                    id="roles" name="roles[]" multiple="multiple" required style="width: 100%;">
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->name }}" {{ in_array($role->name, old('roles', $user->getRoleNames()->toArray())) ? 'selected' : '' }}>
+                                        {{ $role->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('roles')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -90,8 +84,8 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Create Employee</button>
-                            <a href="{{ route('employees.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -100,3 +94,19 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#roles').select2({
+            placeholder: 'Select roles',
+            allowClear: true
+        });
+    });
+</script>
+@endpush

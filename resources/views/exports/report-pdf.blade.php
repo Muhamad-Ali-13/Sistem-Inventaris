@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Report - {{ ucfirst($type) }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #333; }
+        .header p { margin: 5px 0; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .summary { margin-bottom: 20px; }
+        .summary-item { margin-bottom: 10px; }
+        .footer { margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Inventory Management System</h1>
+        <h2>{{ ucfirst($type) }} Report</h2>
+        <p>Period: {{ \Carbon\Carbon::parse($period['start'])->format('d F Y') }} - {{ \Carbon\Carbon::parse($period['end'])->format('d F Y') }}</p>
+        <p>Generated on: {{ now()->format('d F Y H:i') }}</p>
+    </div>
+
+    @if($type == 'transactions')
+    <div class="summary">
+        <h3>Transaction Summary</h3>
+        <div class="summary-item">Total Transactions: {{ $data['transactionSummary']['total_transactions'] }}</div>
+        <div class="summary-item">Stock In: {{ $data['transactionSummary']['total_in'] }}</div>
+        <div class="summary-item">Stock Out: {{ $data['transactionSummary']['total_out'] }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Item</th>
+                <th>User</th>
+                <th>Quantity</th>
+                <th>Type</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['transactions'] as $transaction)
+            <tr>
+                <td>{{ $transaction->code }}</td>
+                <td>{{ $transaction->item->name }}</td>
+                <td>{{ $transaction->user->name }}</td>
+                <td>{{ $transaction->quantity }}</td>
+                <td>{{ strtoupper($transaction->type) }}</td>
+                <td>{{ $transaction->transaction_date->format('d/m/Y') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    @elseif($type == 'item-requests')
+    <div class="summary">
+        <h3>Item Request Summary</h3>
+        <div class="summary-item">Total Requests: {{ $data['requestSummary']['total_requests'] }}</div>
+        <div class="summary-item">Pending: {{ $data['requestSummary']['pending'] }}</div>
+        <div class="summary-item">Approved: {{ $data['requestSummary']['approved'] }}</div>
+        <div class="summary-item">Rejected: {{ $data['requestSummary']['rejected'] }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>User</th>
+                <th>Quantity</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Request Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['itemRequests'] as $request)
+            <tr>
+                <td>{{ $request->item->name }}</td>
+                <td>{{ $request->user->name }}</td>
+                <td>{{ $request->quantity }}</td>
+                <td>{{ Str::limit($request->purpose, 50) }}</td>
+                <td>{{ strtoupper($request->status) }}</td>
+                <td>{{ $request->created_at->format('d/m/Y H:i') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    @elseif($type == 'vehicle-usage')
+    <div class="summary">
+        <h3>Vehicle Usage Summary</h3>
+        <div class="summary-item">Total Usage: {{ $data['vehicleSummary']['total_usage'] }}</div>
+        <div class="summary-item">Pending: {{ $data['vehicleSummary']['pending'] }}</div>
+        <div class="summary-item">Approved: {{ $data['vehicleSummary']['approved'] }}</div>
+        <div class="summary-item">Rejected: {{ $data['vehicleSummary']['rejected'] }}</div>
+        <div class="summary-item">Returned: {{ $data['vehicleSummary']['returned'] }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>License Plate</th>
+                <th>User</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['vehicleUsage'] as $usage)
+            <tr>
+                <td>{{ $usage->vehicle->name }}</td>
+                <td>{{ $usage->vehicle->license_plate }}</td>
+                <td>{{ $usage->user->name }}</td>
+                <td>{{ $usage->start_date->format('d/m/Y') }}</td>
+                <td>{{ $usage->end_date->format('d/m/Y') }}</td>
+                <td>{{ strtoupper($usage->status) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    @endif
+
+    <div class="footer">
+        <p>Generated by Inventory Management System</p>
+    </div>
+</body>
+</html>

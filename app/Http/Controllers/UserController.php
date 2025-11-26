@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Employee;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,7 @@ class UserController extends Controller
         return false;
     }
 
+
     public function index(Request $request)
     {
         $query = User::with('roles');
@@ -73,25 +75,41 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', compact('roles'));
+        $employees = Employee::whereDoesntHave('user')->get(); // Hanya ambil employee yang belum punya user
+
+        return view('users.create', compact('roles', 'employees'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'employee_id' => 'required|exists:employees,id',
             'password' => 'required|string|min:8|confirmed',
             'roles' => 'required|array',
         ]);
 
+        // Dapatkan data employee
+        $employee = Employee::findOrFail($request->employee_id);
+
+        // Cek apakah email employee sudah digunakan oleh user lain
+        if (User::where('email', $employee->email)->exists()) {
+            return redirect()->back()
+                ->with('error', 'Email ' . $employee->email . ' sudah digunakan oleh user lain.')
+                ->withInput();
+        }
+
+        // Buat user dari data employee
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $employee->name,
+            'email' => $employee->email,
             'password' => Hash::make($request->password),
         ]);
 
         $user->syncRoles($request->roles);
+
+        // Link employee dengan user (opsional - jika ingin relasi)
+        $employee->user_id = $user->id;
+        $employee->save();
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -99,7 +117,9 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
+        $employees = Employee::all(); // Tetap tampilkan semua employee untuk edit
+
+        return view('users.edit', compact('user', 'roles', 'employees'));
     }
 
     public function update(Request $request, User $user)

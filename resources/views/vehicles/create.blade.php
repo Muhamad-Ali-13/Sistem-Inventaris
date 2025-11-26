@@ -6,19 +6,19 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Create Employee</h3>
+                    <h3 class="card-title">Create Vehicle</h3>
                     <div class="card-tools">
-                        <a href="{{ route('employees.index') }}" class="btn btn-secondary">Back to List</a>
+                        <a href="{{ route('vehicles.index') }}" class="btn btn-secondary">Back to List</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('employees.store') }}">
+                    <form method="POST" action="{{ route('vehicles.store') }}">
                         @csrf
                         
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Full Name *</label>
+                                    <label for="name">Vehicle Name *</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" 
                                            id="name" name="name" value="{{ old('name') }}" required>
                                     @error('name')
@@ -30,10 +30,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email">Email Address *</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                           id="email" name="email" value="{{ old('email') }}" required>
-                                    @error('email')
+                                    <label for="license_plate">License Plate *</label>
+                                    <input type="text" class="form-control @error('license_plate') is-invalid @enderror" 
+                                           id="license_plate" name="license_plate" value="{{ old('license_plate') }}" required>
+                                    @error('license_plate')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -45,10 +45,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="phone">Phone Number *</label>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                           id="phone" name="phone" value="{{ old('phone') }}" required>
-                                    @error('phone')
+                                    <label for="type">Vehicle Type *</label>
+                                    <input type="text" class="form-control @error('type') is-invalid @enderror" 
+                                           id="type" name="type" value="{{ old('type') }}" required>
+                                    @error('type')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -57,17 +57,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="department_id">Department *</label>
-                                    <select class="form-control @error('department_id') is-invalid @enderror" 
-                                            id="department_id" name="department_id" required>
-                                        <option value="">Select Department</option>
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
-                                                {{ $department->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('department_id')
+                                    <label for="fuel_consumption">Fuel Consumption (km/L)</label>
+                                    <input type="number" class="form-control @error('fuel_consumption') is-invalid @enderror" 
+                                           id="fuel_consumption" name="fuel_consumption" value="{{ old('fuel_consumption') }}" min="0" step="0.1">
+                                    @error('fuel_consumption')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -76,13 +69,11 @@
                             </div>
                         </div>
 
-                        <!-- TAMBAHKAN INPUT POSITION -->
                         <div class="form-group">
-                            <label for="position">Position *</label>
-                            <input type="text" class="form-control @error('position') is-invalid @enderror" 
-                                   id="position" name="position" value="{{ old('position') }}" required
-                                   placeholder="Enter employee position (e.g., Manager, Staff, etc.)">
-                            @error('position')
+                            <label for="last_maintenance">Last Maintenance Date</label>
+                            <input type="date" class="form-control @error('last_maintenance') is-invalid @enderror" 
+                                   id="last_maintenance" name="last_maintenance" value="{{ old('last_maintenance') }}">
+                            @error('last_maintenance')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -90,8 +81,8 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Create Employee</button>
-                            <a href="{{ route('employees.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Vehicle</button>
+                            <a href="{{ route('vehicles.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

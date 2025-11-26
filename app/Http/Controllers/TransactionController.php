@@ -118,28 +118,46 @@ class TransactionController extends Controller
             }
         }
 
-        $code = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+        try {
+            // Generate transaction code
+            $code = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(5));
 
-        Transaction::create([
-            'code' => $code,
-            'item_id' => $request->item_id,
-            'user_id' => Auth::id(),
-            'quantity' => $request->quantity,
-            'type' => $request->type,
-            'notes' => $request->notes,
-            'transaction_date' => $request->transaction_date,
-        ]);
+            // Check if code already exists, regenerate if needed
+            while (Transaction::where('code', $code)->exists()) {
+                $code = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+            }
 
-        $item = Item::find($request->item_id);
-        if ($request->type == 'in') {
-            $item->stock += $request->quantity;
-        } else {
-            $item->stock -= $request->quantity;
+            // Debug: Log the data being created
+            logger('Creating transaction with code: ' . $code);
+
+            // Create transaction WITH code
+            $transaction = Transaction::create([
+                'code' => $code, // Pastikan ini ada
+                'item_id' => $request->item_id,
+                'user_id' => Auth::id(),
+                'quantity' => $request->quantity,
+                'type' => $request->type,
+                'notes' => $request->notes,
+                'transaction_date' => $request->transaction_date,
+            ]);
+
+            // Update item stock
+            $item = Item::find($request->item_id);
+            if ($request->type == 'in') {
+                $item->stock += $request->quantity;
+            } else {
+                $item->stock -= $request->quantity;
+            }
+            $item->save();
+
+            return redirect()->route('transactions.index')
+                ->with('success', 'Transaction created successfully.');
+        } catch (\Exception $e) {
+            logger('Error creating transaction: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to create transaction: ' . $e->getMessage())
+                ->withInput();
         }
-        $item->save();
-
-        return redirect()->route('transactions.index')
-            ->with('success', 'Transaction created successfully.');
     }
 
     public function show(Transaction $transaction)

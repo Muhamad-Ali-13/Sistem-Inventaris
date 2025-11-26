@@ -9,7 +9,19 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['item_id', 'quantity', 'type', 'notes', 'user_id'];
+    protected $fillable = [
+        'code', // Pastikan ini ada
+        'item_id', 
+        'user_id', 
+        'quantity', 
+        'type', 
+        'notes', 
+        'transaction_date'
+    ];
+
+    protected $casts = [
+        'transaction_date' => 'date',
+    ];
 
     public function item()
     {

@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ItemController extends Controller
 {
@@ -13,7 +14,7 @@ class ItemController extends Controller
     {
         $this->middleware('auth');
 
-        // Manual permission check - alternatif tanpa middleware
+        // Manual permission check
         $this->middleware(function ($request, $next) {
             if (!Auth::check()) {
                 return redirect()->route('login');
@@ -73,7 +74,9 @@ class ItemController extends Controller
         }
 
         $items = $query->paginate(10);
-        return view('items.index', compact('items'));
+        $categories = Category::all(); // Tambahkan ini
+        
+        return view('items.index', compact('items', 'categories')); // Update compact
     }
 
     public function create()
@@ -86,7 +89,6 @@ class ItemController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:items',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'stock' => 'required|integer|min:0',
@@ -94,14 +96,41 @@ class ItemController extends Controller
             'location' => 'nullable|string|max:255',
         ]);
 
-        Item::create($request->all());
+        try {
+            // Generate kode item otomatis
+            $code = 'ITM-' . date('Ymd') . '-' . strtoupper(Str::random(5));
 
-        return redirect()->route('items.index')->with('success', 'Item created successfully.');
+            // Cek jika kode sudah ada, generate ulang
+            while (Item::where('code', $code)->exists()) {
+                $code = 'ITM-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+            }
+
+            // Method 1: Gunakan create dengan array
+            $item = Item::create([
+                'name' => $request->name,
+                'code' => $code,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'stock' => $request->stock,
+                'min_stock' => $request->min_stock,
+                'location' => $request->location,
+            ]);
+
+            return redirect()->route('items.index')->with('success', 'Item created successfully.');
+
+        } catch (\Exception $e) {
+            // Log error detail
+            logger('Error creating item: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to create item: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function show(Item $item)
     {
-        return view('items.show', compact('item'));
+        $categories = Category::all(); // Tambahkan ini
+        return view('items.show', compact('item', 'categories')); // Update compact
     }
 
     public function edit(Item $item)
@@ -114,7 +143,6 @@ class ItemController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:items,code,' . $item->id,
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'stock' => 'required|integer|min:0',

@@ -12,18 +12,18 @@ class EmployeeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        
+
         $this->middleware(function ($request, $next) {
             if (!Auth::check()) {
                 return redirect()->route('login');
             }
 
             $user = Auth::user();
-            
+
             if ($this->userHasRole($user, 'super admin') || $this->userHasRole($user, 'admin')) {
                 return $next($request);
             }
-            
+
             abort(403, 'Unauthorized action.');
         });
     }
@@ -35,14 +35,14 @@ class EmployeeController extends Controller
         // Manual search implementation
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%")
-                  ->orWhere('phone', 'like', "%$search%")
-                  ->orWhere('position', 'like', "%$search%")
-                  ->orWhereHas('department', function($q) use ($search) {
-                      $q->where('name', 'like', "%$search%");
-                  });
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('phone', 'like', "%$search%")
+                    ->orWhere('position', 'like', "%$search%")
+                    ->orWhereHas('department', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
             });
         }
 
@@ -63,13 +63,18 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees',
             'phone' => 'required|string|max:20',
             'department_id' => 'required|exists:departments,id',
-            'position' => 'required|string|max:255',
+            'position' => 'required|string|max:255', // Pastikan ini ada
         ]);
 
-        Employee::create($request->all());
+        Employee::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'department_id' => $request->department_id,
+            'position' => $request->position, // Pastikan ini ada
+        ]);
 
-        return redirect()->route('employees.index')
-            ->with('success', 'Employee created successfully.');
+        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
     public function show(Employee $employee)

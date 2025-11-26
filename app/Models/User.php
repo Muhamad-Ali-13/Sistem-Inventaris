@@ -80,4 +80,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(VehicleUsage::class, 'approved_by');
     }
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id');
+    }
 }
