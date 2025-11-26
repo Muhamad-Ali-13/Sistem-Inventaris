@@ -32,7 +32,7 @@
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" name="name" value="{{ old('name', $user->name) }}" required>
+                                   id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required>
                             @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -43,7 +43,7 @@
                         <div class="form-group">
                             <label for="email">Email Address</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ old('email', $user->email) }}" required>
+                                   id="email" name="email" value="{{ old('email', auth()->user()->email) }}" required>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -102,7 +102,7 @@
                             <strong>Name:</strong>
                         </div>
                         <div class="col-sm-8">
-                            {{ $user->name }}
+                            {{ auth()->user()->name }}
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -110,7 +110,7 @@
                             <strong>Email:</strong>
                         </div>
                         <div class="col-sm-8">
-                            {{ $user->email }}
+                            {{ auth()->user()->email }}
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -118,7 +118,7 @@
                             <strong>Roles:</strong>
                         </div>
                         <div class="col-sm-8">
-                            @foreach ($user->getRoleNames() as $role)
+                            @foreach (auth()->user()->getRoleNames() as $role)
                                 <span class="badge badge-primary">{{ $role }}</span>
                             @endforeach
                         </div>
@@ -128,7 +128,7 @@
                             <strong>Member Since:</strong>
                         </div>
                         <div class="col-sm-8">
-                            {{ $user->created_at->format('d F Y') }}
+                            {{ auth()->user()->created_at->format('d F Y') }}
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                         <div class="col-6">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $itemRequestsCount }}</h3>
+                                    <h3>{{ $itemRequestsCount ?? auth()->user()->itemRequests()->count() }}</h3>
                                     <p>Item Requests</p>
                                 </div>
                                 <div class="icon">
@@ -154,7 +154,7 @@
                         <div class="col-6">
                             <div class="small-box bg-success">
                                 <div class="inner">
-                                    <h3>{{ $vehicleUsageCount }}</h3>
+                                    <h3>{{ $vehicleUsageCount ?? auth()->user()->vehicleUsage()->count() }}</h3>
                                     <p>Vehicle Usage</p>
                                 </div>
                                 <div class="icon">
@@ -169,3 +169,37 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+}
+.small-box > .inner {
+    padding: 10px;
+}
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+}
+.small-box p {
+    font-size: 1rem;
+}
+.small-box .icon {
+    color: rgba(0,0,0,.15);
+    z-index: 0;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 70px;
+    transition: all .3s linear;
+}
+</style>
+@endpush
