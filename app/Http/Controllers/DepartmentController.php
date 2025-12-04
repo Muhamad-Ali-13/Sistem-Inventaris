@@ -11,18 +11,18 @@ class DepartmentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        
+
         $this->middleware(function ($request, $next) {
             if (!Auth::check()) {
                 return redirect()->route('login');
             }
 
             $user = Auth::user();
-            
+
             if ($this->userHasRole($user, 'super admin') || $this->userHasRole($user, 'admin')) {
                 return $next($request);
             }
-            
+
             abort(403, 'Unauthorized action.');
         });
     }
@@ -31,14 +31,19 @@ class DepartmentController extends Controller
     {
         $query = Department::query();
 
-        // Manual search implementation
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where('name', 'like', "%$search%")
-                  ->orWhere('description', 'like', "%$search%");
+        if ($request->has('sort')) {
+            $sort = $request->sort;
+            $direction = $request->get('direction', 'asc');
+            $query->orderBy($sort, $direction);
         }
 
-        $departments = $query->paginate(10);
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('nama', 'like', "%$search%")
+                ->orWhere('deskripsi', 'like', "%$search%");
+        }
+
+        $departments = $query->paginate(100);
         return view('departments.index', compact('departments'));
     }
 
@@ -50,8 +55,8 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'nama' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
         ]);
 
         Department::create($request->all());
@@ -68,8 +73,8 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'nama' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
         ]);
 
         $department->update($request->all());

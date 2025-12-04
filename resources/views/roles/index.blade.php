@@ -10,7 +10,7 @@
                     <div class="card-tools">
                         <a href="{{ route('roles.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Add Role
-                        </a>
+             z           </a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -30,11 +30,11 @@
                         <table class="table table-bordered table-striped" data-datatable>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Role Name</th>
+                                    <th>No</th>
+                                    <th>Nama Role</th>
                                     <th>Permissions</th>
-                                    <th>Users Count</th>
-                                    <th>Actions</th>
+                                    <th>Jumlah Pengguna</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

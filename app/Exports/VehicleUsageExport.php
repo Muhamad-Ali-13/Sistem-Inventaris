@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\PenggunaanKendaraan;
 use App\Models\VehicleUsage;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -22,7 +23,7 @@ class VehicleUsageExport implements FromCollection, WithHeadings, WithMapping, W
 
     public function collection()
     {
-        return VehicleUsage::with(['vehicle', 'user', 'approver'])
+        return PenggunaanKendaraan::with(['vehicle', 'user', 'approver'])
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
     }

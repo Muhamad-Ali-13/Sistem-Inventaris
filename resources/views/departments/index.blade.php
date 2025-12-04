@@ -6,9 +6,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Departments</h3>
+                    <h3 class="card-title">Data Departemen</h3>
                     <div class="card-tools">
-                        <a href="{{ route('departments.create') }}" class="btn btn-primary">Add Department</a>
+                        <a href="{{ route('departments.create') }}" class="btn btn-primary">Tambah Departemen</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -16,18 +16,18 @@
                         <table class="table table-bordered" id="departments-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Actions</th>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>Deskripsi</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($departments as $department)
                                 <tr>
                                     <td>{{ $department->id }}</td>
-                                    <td>{{ $department->name }}</td>
-                                    <td>{{ $department->description }}</td>
+                                    <td>{{ $department->nama }}</td>
+                                    <td>{{ $department->deskripsi }}</td>
                                     <td>
                                         <a href="{{ route('departments.edit', $department) }}" class="btn btn-warning btn-sm">Edit</a>
                                         <form action="{{ route('departments.destroy', $department) }}" method="POST" class="d-inline">

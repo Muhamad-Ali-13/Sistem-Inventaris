@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Edit User</h3>
                     <div class="card-tools">
-                        <a href="{{ route('users.index') }}" class="btn btn-secondary">Back to List</a>
+                        <a href="{{ route('users.index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Full Name *</label>
+                                    <label for="name">Nama Lengkap *</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" 
                                            id="name" name="name" value="{{ old('name', $user->name) }}" required>
                                     @error('name')
@@ -46,10 +46,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="password">New Password</label>
+                                    <label for="password">Password Baru</label>
                                     <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                            id="password" name="password">
-                                    <small class="form-text text-muted">Leave blank if you don't want to change password</small>
+                                    <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password</small>
                                     @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="password_confirmation">Confirm New Password</label>
+                                    <label for="password_confirmation">Konfirmasi Password Baru</label>
                                     <input type="password" class="form-control" 
                                            id="password_confirmation" name="password_confirmation">
                                 </div>
@@ -67,7 +67,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="roles">Roles *</label>
+                            <label for="roles">Role *</label>
                             <select class="form-control select2 @error('roles') is-invalid @enderror" 
                                     id="roles" name="roles[]" multiple="multiple" required style="width: 100%;">
                                 @foreach($roles as $role)
@@ -85,7 +85,7 @@
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Update User</button>
-                            <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('users.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                     </form>
                 </div>
@@ -104,7 +104,7 @@
 <script>
     $(document).ready(function() {
         $('#roles').select2({
-            placeholder: 'Select roles',
+            placeholder: 'Pilih role',
             allowClear: true
         });
     });

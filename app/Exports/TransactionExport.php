@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Transaction;
+use App\Models\Transaksi;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -22,7 +23,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping, W
 
     public function collection()
     {
-        return Transaction::with(['item', 'user'])
+        return Transaksi::with(['item', 'user'])
             ->whereBetween('transaction_date', [$this->startDate, $this->endDate])
             ->get();
     }

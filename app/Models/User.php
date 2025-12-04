@@ -8,34 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-/**
- * Class User
- * 
- * @property int $id
- * @property string $name
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * 
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Transaction[] $transactions
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ItemRequest[] $itemRequests
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\VehicleUsage[] $vehicleUsage
- * 
- * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method bool hasRole($roles, $guard = null)
- * @method bool hasAnyRole($roles, $guard = null)
- * @method bool hasAllRoles($roles, $guard = null)
- * @method \Illuminate\Database\Eloquent\Collection|string[] getRoleNames()
- * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
- */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
@@ -44,6 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'karyawan_id',
     ];
 
     protected $hidden = [
@@ -56,32 +29,91 @@ class User extends Authenticatable
     ];
 
     // Relationships
-    public function transactions()
+    public function transaksi()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaksi::class);
     }
 
-    public function itemRequests()
+
+    public function penggunaanKendaraan()
     {
-        return $this->hasMany(ItemRequest::class);
+        return $this->hasMany(PenggunaanKendaraan::class);
     }
 
-    public function vehicleUsage()
+    public function permintaanBarang()
     {
-        return $this->hasMany(VehicleUsage::class);
+        return $this->hasMany(PermintaanBarang::class, 'user_id');
     }
 
-    public function approvedItemRequests()
+    // Relationship ke permintaan yang disetujui user (sebagai approver)
+    public function approvedPermintaanBarang()
     {
-        return $this->hasMany(ItemRequest::class, 'approved_by');
+        return $this->hasMany(PermintaanBarang::class, 'disetujui_oleh');
     }
 
-    public function approvedVehicleUsage()
+    public function disetujuiPenggunaanKendaraan()
     {
-        return $this->hasMany(VehicleUsage::class, 'approved_by');
+        return $this->hasMany(PenggunaanKendaraan::class, 'disetujui_oleh');
     }
-    public function employee()
+
+    // Relasi baru ke karyawan
+    // Relasi ke karyawan
+    public function karyawan()
     {
-        return $this->hasOne(Employee::class, 'user_id');
+        return $this->belongsTo(Karyawan::class, 'karyawan_id');
+    }
+
+    // Cek apakah user adalah superadmin
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('super admin');
+    }
+
+    // Cek apakah user adalah admin
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
+    }
+
+    // Cek apakah user adalah karyawan
+    public function isKaryawan()
+    {
+        return $this->hasRole('karyawan');
+    }
+
+    // Method untuk mendapatkan data karyawan
+    public function getDataKaryawan()
+    {
+        return $this->karyawan ?? null;
+    }
+
+    // Method untuk mendapatkan total pengeluaran
+    // Method untuk mendapatkan total pengeluaran
+    public function getTotalPengeluaranBulanIni()
+    {
+        $total = $this->permintaanBarang()
+            ->where('status', 'disetujui')
+            ->whereMonth('created_at', now()->month)
+            ->sum('total_harga');
+
+        return $total ?: 0;
+    }
+
+    // Method untuk mendapatkan riwayat pengeluaran
+    public function getRiwayatPengeluaran($bulan = null, $tahun = null)
+    {
+        $query = $this->permintaanBarang()
+            ->where('status', 'disetujui')
+            ->with('barang');
+
+        if ($bulan) {
+            $query->whereMonth('created_at', $bulan);
+        }
+
+        if ($tahun) {
+            $query->whereYear('created_at', $tahun);
+        }
+
+        return $query->get();
     }
 }

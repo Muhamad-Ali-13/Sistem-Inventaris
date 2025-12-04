@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\ItemRequest;
+use App\Models\PermintaanBarang;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -22,7 +23,7 @@ class ItemRequestsExport implements FromCollection, WithHeadings, WithMapping, W
 
     public function collection()
     {
-        return ItemRequest::with(['item', 'user', 'approver'])
+        return PermintaanBarang::with(['item', 'user', 'approver'])
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
     }

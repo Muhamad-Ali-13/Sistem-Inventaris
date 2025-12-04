@@ -3,19 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\VehicleController;
-use App\Http\Controllers\ItemRequestController;
-use App\Http\Controllers\VehicleUsageController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\RequestController;
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\KendaraanController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PenggunaanKendaraanController;
+use App\Http\Controllers\PermintaanBarangController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -25,6 +24,20 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::resource('roles', RoleController::class)
+    ->middleware('auth');
+Route::get('roles/create', [RoleController::class, 'create'])
+    ->middleware('auth', 'role:superadmin');
+Route::post('roles', [RoleController::class, 'store'])
+    ->middleware('auth', 'role:superadmin');
+Route::get('roles/{role}/edit', [RoleController::class, 'edit'])
+    ->middleware('auth', 'role:superadmin');
+Route::put('roles/{role}', [RoleController::class, 'update'])
+    ->middleware('auth', 'role:superadmin');
+Route::delete('roles/{role}', [RoleController::class, 'destroy'])
+    ->middleware('auth', 'role:superadmin');
+
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard
@@ -36,26 +49,27 @@ Route::middleware(['auth'])->group(function () {
 
     // Management Routes - GUNAKAN AUTH DULU, PERMISSION NANTI
     Route::resource('departments', DepartmentController::class)->except(['show']);
-    Route::resource('employees', EmployeeController::class);
-    Route::resource('categories', CategoryController::class)->except(['show']);
-    Route::resource('items', ItemController::class);
+    Route::resource('karyawan', KaryawanController::class);
+    Route::resource('kategori', KategoriController::class)->except(['show']);
+    Route::resource('barang', BarangController::class);
     Route::resource('users', UserController::class);
-    Route::resource('transactions', TransactionController::class);
+    Route::resource('transaksi', TransaksiController::class);
     Route::resource('roles', RoleController::class)->except(['show']);
-    Route::resource('vehicles', VehicleController::class);
-    Route::resource('item-requests', ItemRequestController::class);
-    Route::resource('vehicle-usage', VehicleUsageController::class);
+    Route::resource('kendaraan', KendaraanController::class);
+    Route::resource('permintaan-barang', PermintaanBarangController::class);
+    Route::resource('penggunaan-kendaraan', PenggunaanKendaraanController::class);
     
     // Approval routes
+
+    Route::put('/permintaan-barang/{permintaanBarang}', [PermintaanBarangController::class, 'update'])->name('permintaan-barang.update');
+    Route::put('permintaan-barang/{permintaan_barang}/approve', [PermintaanBarangController::class, 'approve'])->name('permintaan-barang.approve');
+    Route::put('permintaan-barang/{permintaan_barang}/reject', [PermintaanBarangController::class, 'reject'])->name('permintaan-barang.reject');
     
-    Route::put('item-requests/{item_request}/approve', [ItemRequestController::class, 'approve'])->name('item-requests.approve');
-    Route::put('item-requests/{item_request}/reject', [ItemRequestController::class, 'reject'])->name('item-requests.reject');
-    
-    Route::put('vehicle-usage/{vehicle_usage}/approve', [VehicleUsageController::class, 'approve'])->name('vehicle-usage.approve');
-    Route::put('vehicle-usage/{vehicle_usage}/reject', [VehicleUsageController::class, 'reject'])->name('vehicle-usage.reject');
-    Route::put('vehicle-usage/{vehicle_usage}/return', [VehicleUsageController::class, 'return'])->name('vehicle-usage.return');
+    Route::put('penggunaan-kendaraan/{penggunaan_kendaraan}/approve', [PenggunaanKendaraanController::class, 'approve'])->name('penggunaan-kendaraan.approve');
+    Route::put('penggunaan-kendaraan/{penggunaan_kendaraan}/reject', [PenggunaanKendaraanController::class, 'reject'])->name('penggunaan-kendaraan.reject');
+    Route::put('penggunaan-kendaraan/{penggunaan_kendaraan}/return', [PenggunaanKendaraanController::class, 'return'])->name('penggunaan-kendaraan.return');
     
     // Reports
-    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
+    Route::get('laporan', [LaporanController::class, 'index'])->name('reports.index');
+    Route::get('laporan/export', [LaporanController::class, 'export'])->name('reports.export');
 });

@@ -3,10 +3,10 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Edit Department</h3>
+                        <h3 class="card-title">Edit Departemen</h3>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('departments.update', $department) }}">
@@ -14,10 +14,10 @@
                             @method('PUT')
 
                             <div class="form-group">
-                                <label for="name">Department Name *</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                    id="name" name="name" value="{{ old('name', $department->name) }}" required>
-                                @error('name')
+                                <label for="nama">Nama Departemen *</label>
+                                <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                                    id="nama" nama="nama" value="{{ old('nama', $department->nama) }}" required>
+                                @error('nama')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -25,10 +25,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-                                    rows="3">{{ old('description', $department->description) }}</textarea>
-                                @error('description')
+                                <label for="deskripsi">Deskripsi</label>
+                                <textarea class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" nama="deskripsi"
+                                    rows="3">{{ old('deskripsi', $department->deskripsi) }}</textarea>
+                                @error('deskripsi')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -36,8 +36,8 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Update Department</button>
-                                <a href="{{ route('departments.index') }}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                <a href="{{ route('departments.index') }}" class="btn btn-secondary">Batal</a>
                             </div>
                         </form>
                     </div>

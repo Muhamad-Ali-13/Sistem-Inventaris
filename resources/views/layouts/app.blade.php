@@ -21,7 +21,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css">
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -82,7 +82,7 @@
                     </div> --}}
 
                     <!-- Sidebar Menu -->
-                    <nav class="mt-2">
+                    <nav class="mt-5">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
                             <li class="nav-item">
@@ -110,27 +110,27 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('employees.index') }}" class="nav-link">
+                                            <a href="{{ route('karyawan.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Employees</p>
+                                                <p>Karyawan</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('categories.index') }}" class="nav-link">
+                                            <a href="{{ route('kategori.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Categories</p>
+                                                <p>Kategori</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('items.index') }}" class="nav-link">
+                                            <a href="{{ route('barang.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Items</p>
+                                                <p>Barang</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('vehicles.index') }}" class="nav-link">
+                                            <a href="{{ route('kendaraan.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Vehicles</p>
+                                                <p>Kendaraan</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -146,27 +146,27 @@
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon fas fa-exchange-alt"></i>
                                         <p>
-                                            Transactions
+                                            Transaksi
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="{{ route('transactions.index') }}" class="nav-link">
+                                            <a href="{{ route('transaksi.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Transactions</p>
+                                                <p>Transaksi</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('item-requests.index') }}" class="nav-link">
+                                            <a href="{{ route('permintaan-barang.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Item Requests</p>
+                                                <p>Permintaan Barang</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('vehicle-usage.index') }}" class="nav-link">
+                                            <a href="{{ route('penggunaan-kendaraan.index') }}" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
-                                                <p>Vehicle Usage</p>
+                                                <p>Penggunaan Kendaraan</p>
                                             </a>
                                         </li>
                                     </ul>
@@ -175,7 +175,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('reports.index') }}" class="nav-link">
                                         <i class="nav-icon fas fa-chart-bar"></i>
-                                        <p>Reports</p>
+                                        <p>Laporan</p>
                                     </a>
                                 </li>
                             @endif
@@ -190,16 +190,16 @@
                             @endif
 
                             <li class="nav-item">
-                                <a href="{{ route('item-requests.index') }}" class="nav-link">
+                                <a href="{{ route('permintaan-barang.index') }}" class="nav-link">
                                     <i class="nav-icon fas fa-clipboard-list"></i>
-                                    <p>My Item Requests</p>
+                                    <p>Permintaan Saya</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('vehicle-usage.index') }}" class="nav-link">
+                                <a href="{{ route('penggunaan-kendaraan.index') }}" class="nav-link">
                                     <i class="nav-icon fas fa-car"></i>
-                                    <p>My Vehicle Usage</p>
+                                    <p>Kendaraan Saya</p>
                                 </a>
                             </li>
                         </ul>

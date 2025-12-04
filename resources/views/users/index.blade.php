@@ -6,47 +6,61 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Users</h3>
+                    <h3 class="card-title">Daftar User</h3>
                     <div class="card-tools">
-                        <a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a>
+                        <a href="{{ route('users.create') }}" class="btn btn-primary">Tambah User</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- Search Form -->
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <form method="GET" action="{{ route('users.index') }}" class="mb-3">
                         <div class="row">
                             <div class="col-md-6">
-                                <input type="text" name="search" class="form-control" placeholder="Search users..." value="{{ request('search') }}">
+                                <input type="text" name="search" class="form-control" 
+                                       placeholder="Cari nama/email..." value="{{ request('search') }}">
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary">Search</button>
+                                <button type="submit" class="btn btn-primary">Cari</button>
                                 <a href="{{ route('users.index') }}" class="btn btn-secondary">Reset</a>
                             </div>
                         </div>
                     </form>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="users-table">
+                        <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>No</th>
+                                    <th>Nama</th>
                                     <th>Email</th>
-                                    <th>Employee Info</th>
-                                    <th>Roles</th>
-                                    <th>Created At</th>
-                                    <th>Actions</th>
+                                    <th>Karyawan Terkait</th>
+                                    <th>Role</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($users as $user)
                                 <tr>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
-                                        @if($user->employee)
-                                            {{ $user->employee->position }} - {{ $user->employee->department->name }}
+                                        @if($user->karyawan)
+                                            {{ $user->karyawan->nama }} <br>
+                                            <small>{{ $user->karyawan->jabatan ?? 'Tanpa Jabatan' }}</small>
                                         @else
-                                            <span class="text-muted">No employee linked</span>
+                                            <span class="text-muted">Tidak terkait karyawan</span>
                                         @endif
                                     </td>
                                     <td>
@@ -54,14 +68,20 @@
                                             <span class="badge badge-primary">{{ $role }}</span>
                                         @endforeach
                                     </td>
-                                    <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                                     <td>
-                                        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @if($user->id !== Auth::id())
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                                    onclick="return confirm('Hapus user ini?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach
@@ -78,18 +98,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $('#users-table').DataTable({
-            "paging": false,
-            "searching": false,
-            "info": false,
-            "ordering": true,
-            "autoWidth": false,
-            "responsive": true,
-        });
-    });
-</script>
-@endpush
